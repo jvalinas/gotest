@@ -4,7 +4,6 @@ import (
   "fmt"
   "time"
   "board"
-  "artifact"
 )
 
 func init() {
@@ -22,9 +21,9 @@ func NewCore( board *board.Board ) *Core {
 
 func (core *Core) MoveArtifacts() {
   board := core.board
-  for key, value := range board.Artifacts() {
-    art := artifact.Artifact(value)
-    fmt.Println("Key", key, "Artifact", art.Id())
+  for key, artifact := range board.Artifacts() {
+    artifact.Pulse()
+    fmt.Println("Key:", key, "Pos:", artifact.X(), artifact.Y())
     }
 }
 
@@ -33,7 +32,7 @@ func (object *Core) Run() {
   for{
     object.MoveArtifacts()
     i += 1
-    time.Sleep(100*time.Millisecond)
+    time.Sleep(1*time.Millisecond)
   }
 }
 

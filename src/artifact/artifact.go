@@ -33,6 +33,15 @@ func NewArtifact(
 }
 
 func (object *Artifact) Pulse() {
+
+  if object.x + object.dX > 999.0 || object.x + object.dX < 0.0 {
+    object.dX = -object.dX
+  }
+
+  if object.y + object.dY > 999 || object.y + object.dY < 0 {
+    object.dY = -object.dY
+  }
+
   object.x += object.dX
   object.y += object.dY
 }

@@ -54,8 +54,8 @@ func main(){
   core := core.NewCore(board)
   go core.Run()
 
-  artifact1 := artifact.NewArtifact(1, "art1", 0.0, 0.0, 0.0, 1.0)
-  artifact2 := artifact.NewArtifact(2, "art2", 0.0, 0.0, 1.0, 0.0)
+  artifact1 := artifact.NewArtifact(1, "art1", 0.0, 0.0, 1.1, 1.1)
+  artifact2 := artifact.NewArtifact(2, "art2", 1000.0, 1000.0, -1.1, -1.1)
 
   board.AddArtifact(artifact1)
   board.AddArtifact(artifact2)
