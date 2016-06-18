@@ -1,16 +1,15 @@
 package main
 
 import (
-  "fmt"
   "board"
   "core"
   "time"
   _ "player"
   "artifact"
+  "github.com/nsf/termbox-go"
 )
 
 func init() {
-  fmt.Println("init game")
 }
 
 func main(){
@@ -19,7 +18,8 @@ func main(){
   board.Fill(50)
   board.Print()
 
-  //player1 := player.NewPlayer(1, "cnn", 0)
+  //player1 :=
+  } player.NewPlayer(1, "cnn", 0)
   //player2 := player.NewPlayer(2, "foo", 1)
   //map of players
 
@@ -50,15 +50,23 @@ func main(){
   }
   */
 
-  board := board.NewBoard(1000, 1000)
+  err := termbox.Init()
+  if err != nil {
+    panic(err)
+  }
+  termbox.HideCursor()
+  defer termbox.Close()
+
+  width, height := termbox.Size()
+  board := board.NewBoard(width, height)
   core := core.NewCore(board)
   go core.Run()
 
-  artifact1 := artifact.NewArtifact(1, "art1", 0.0, 0.0, 1.1, 1.1)
-  artifact2 := artifact.NewArtifact(2, "art2", 1000.0, 1000.0, -1.1, -1.1)
+  artifact1 := artifact.NewArtifact(1, "art1", 10.0, 0.0, 2.0, 1.0)
+  //artifact2 := artifact.NewArtifact(2, "art2", //1000.0, 1000.0, -1.1, -1.1)
 
   board.AddArtifact(artifact1)
-  board.AddArtifact(artifact2)
+  //board.AddArtifact(artifact2)
 
   for{
     time.Sleep(10*time.Second)

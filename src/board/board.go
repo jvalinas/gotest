@@ -1,14 +1,12 @@
 package board
 
 import (
-  "fmt"
   "math/rand"
   "time"
   "artifact"
 )
 
 func init() {
-  fmt.Println("board init")
   rand.Seed(int64(time.Now().Unix()))
 }
 
@@ -26,6 +24,14 @@ func NewBoard(width int, height int) *Board {
 
     // b.buffer = make([]byte, b.width*b.height)
     return b
+}
+
+func (board Board) Width() int {
+  return board.width
+}
+
+func (board Board) Height() int {
+  return board.height
 }
 
 func (board Board) Artifacts() map[int]*artifact.Artifact {

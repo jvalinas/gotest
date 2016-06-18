@@ -32,13 +32,13 @@ func NewArtifact(
      return object
 }
 
-func (object *Artifact) Pulse() {
+func (object *Artifact) Pulse(width int, height int) {
 
-  if object.x + object.dX > 999.0 || object.x + object.dX < 0.0 {
+  if object.x + object.dX > float32(width-1) || object.x + object.dX < 0.0 {
     object.dX = -object.dX
   }
 
-  if object.y + object.dY > 999 || object.y + object.dY < 0 {
+  if object.y + object.dY > float32(height-1) || object.y + object.dY < 0 {
     object.dY = -object.dY
   }
 
@@ -97,10 +97,6 @@ func (ball Ball) Artifact() *Artifact {
 
 func (ball Ball) Color() string {
   return ball.color
-}
-
-func (ball Ball) Pulse() {
-  ball.artifact.Pulse()
 }
 
 ////////////////////////////////////////////////////////////////////////////
