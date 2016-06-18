@@ -3,7 +3,7 @@ package main
 import (
   "board"
   "core"
-  "time"
+  "math/rand"
   _ "player"
   "artifact"
   "github.com/nsf/termbox-go"
@@ -62,14 +62,24 @@ func main(){
   core := core.NewCore(board)
   go core.Run()
 
-  artifact1 := artifact.NewArtifact(1, "art1", 10.0, 0.0, 2.0, 1.0)
-  //artifact2 := artifact.NewArtifact(2, "art2", //1000.0, 1000.0, -1.1, -1.1)
-
-  board.AddArtifact(artifact1)
-  //board.AddArtifact(artifact2)
-
-  for{
-    time.Sleep(10*time.Second)
+  for i:=0; i<100; i++ {
+    artifact := artifact.NewArtifact(i, "cosa", float32(rand.Intn(width)),
+                                                float32(rand.Intn(height)),
+                                                -6.0 + float32(rand.Intn(6)),
+                                                -4.0 + float32(rand.Intn(4)))
+    board.AddArtifact(artifact)
   }
 
+  //var b []byte = make([]byte, 1)
+  //os.Stdin.Read(b)
+  for {
+    event := termbox.PollEvent()
+    if event.Type == termbox.EventResize {
+      width, height := termbox.Size()
+      board.SetSize(width, height)
+    }
+    if event.Type == termbox.EventKey {
+      break
+    }
+  }
 }

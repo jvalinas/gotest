@@ -39,7 +39,7 @@ func (object *Core) Run() {
     object.MoveArtifacts()
     termbox.Flush()
     i += 1
-    time.Sleep(20*time.Millisecond)
+    time.Sleep(50*time.Millisecond)
   }
 }
 
