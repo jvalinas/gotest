@@ -26,7 +26,7 @@ func NewBoard(width int, height int) *Board {
     return b
 }
 
-func (board Board) SetSize(width int, height int) {
+func (board *Board) SetSize(width int, height int) {
   board.width = width
   board.height = height
 }

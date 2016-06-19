@@ -62,7 +62,7 @@ func main(){
   core := core.NewCore(board)
   go core.Run()
 
-  for i:=0; i<7; i++ {
+  for i:=0; i<50; i++ {
     artifact := artifact.NewArtifact(i, "cosa", float32(rand.Intn(width)),
                                                 float32(rand.Intn(height)),
                                                 -3.0 + float32(rand.Intn(6)),
@@ -78,8 +78,8 @@ func main(){
   for {
     event := termbox.PollEvent()
     if event.Type == termbox.EventResize {
-      width, height := termbox.Size()
-      board.SetSize(width, height)
+      //width, height := termbox.Size()
+      //board.SetSize(width, height)
     }
     if event.Type == termbox.EventKey {
       break

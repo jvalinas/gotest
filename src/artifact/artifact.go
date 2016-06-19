@@ -2,7 +2,6 @@ package artifact
 
 import (
   "fmt"
-  "os/exec"
   "github.com/nsf/termbox-go"
 )
 
@@ -42,21 +41,7 @@ func NewArtifact(
      return object
 }
 
-func (object *Artifact) Collision(objects []*Artifact) {
-  for _, other := range objects{
-    if other == nil || object.color == termbox.ColorRed && object.color == other.color {
-      continue
-    }
-    if object != other && object.x == other.x && object.y == other.y {
-      object.color = termbox.ColorRed
-      other.color = termbox.ColorRed
-      cmd := exec.Command("/usr/bin/beep")
-      cmd.Start()
-    }
-  }
-}
-
-func (object *Artifact) Pulse(width int, height int, objects []*Artifact) {
+func (object *Artifact) Pulse(width int, height int) {
 
   if object.x + object.dX > float32(width-1) || object.x + object.dX < 0.0 {
     object.dX = -object.dX
@@ -71,13 +56,14 @@ func (object *Artifact) Pulse(width int, height int, objects []*Artifact) {
 
   object.dX += object.aX
   object.dY += object.aY
-
-  object.Collision(objects)
-
 }
 
 func (object Artifact) Color() termbox.Attribute {
   return object.color
+}
+
+func (object *Artifact) SetColor(color termbox.Attribute) {
+  object.color = color
 }
 
 func (object Artifact) Id() int {
@@ -100,8 +86,16 @@ func (object Artifact) DX() float32 {
   return object.dX
 }
 
+func (object *Artifact) SetdX(dX float32) {
+  object.dX = dX
+}
+
 func (object Artifact) DY() float32 {
   return object.dY
+}
+
+func (object *Artifact) SetdY(dY float32) {
+  object.dY = dY
 }
 
 ////////////////////////////////////////////////////////////////////////////
