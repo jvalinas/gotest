@@ -2,6 +2,8 @@ package artifact
 
 import (
   "fmt"
+  "os/exec"
+  "github.com/nsf/termbox-go"
 )
 
 func init() {
@@ -14,6 +16,9 @@ type Artifact struct {
   y float32
   dX float32
   dY float32
+  aX float32
+  aY float32
+  color termbox.Attribute
 }
 
 func NewArtifact(
@@ -22,17 +27,36 @@ func NewArtifact(
    x float32,
    y float32,
    dX float32,
-   dY float32) *Artifact {
+   dY float32,
+   aX float32,
+   aY float32) *Artifact {
      object := new(Artifact)
      object.id = id
      object.x = x
      object.y = y
      object.dX = dX
      object.dY = dY
+     object.aX = aX
+     object.aY = aY
+     object.color = termbox.ColorYellow
      return object
 }
 
-func (object *Artifact) Pulse(width int, height int) {
+func (object *Artifact) Collision(objects []*Artifact) {
+  for _, other := range objects{
+    if other == nil || object.color == termbox.ColorRed && object.color == other.color {
+      continue
+    }
+    if object != other && object.x == other.x && object.y == other.y {
+      object.color = termbox.ColorRed
+      other.color = termbox.ColorRed
+      cmd := exec.Command("/usr/bin/beep")
+      cmd.Start()
+    }
+  }
+}
+
+func (object *Artifact) Pulse(width int, height int, objects []*Artifact) {
 
   if object.x + object.dX > float32(width-1) || object.x + object.dX < 0.0 {
     object.dX = -object.dX
@@ -44,6 +68,16 @@ func (object *Artifact) Pulse(width int, height int) {
 
   object.x += object.dX
   object.y += object.dY
+
+  object.dX += object.aX
+  object.dY += object.aY
+
+  object.Collision(objects)
+
+}
+
+func (object Artifact) Color() termbox.Attribute {
+  return object.color
 }
 
 func (object Artifact) Id() int {
@@ -86,7 +120,7 @@ func NewBall(
    dY float32,
    color string) *Ball {
      object := new(Ball)
-     object.artifact = NewArtifact(id, name, x, y, dX, dY)
+     object.artifact = NewArtifact(id, name, x, y, dX, dY, 0.0, 0.0)
      object.color = color
      return object
 }

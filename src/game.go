@@ -62,11 +62,14 @@ func main(){
   core := core.NewCore(board)
   go core.Run()
 
-  for i:=0; i<100; i++ {
+  for i:=0; i<7; i++ {
     artifact := artifact.NewArtifact(i, "cosa", float32(rand.Intn(width)),
                                                 float32(rand.Intn(height)),
-                                                -6.0 + float32(rand.Intn(6)),
-                                                -4.0 + float32(rand.Intn(4)))
+                                                -3.0 + float32(rand.Intn(6)),
+                                                -2.0 + float32(rand.Intn(4)),
+                                                0.0, 0.0 )
+                                                //-0.1 + rand.Float32()/10.0,
+                                                //-0.1 + rand.Float32()/10.0)
     board.AddArtifact(artifact)
   }
 
