@@ -65,10 +65,10 @@ func (core *Core) MoveArtifacts() {
 }
 }
 
-func (object *Core) Run() {
+func (core *Core) Run() {
   for{
     //termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-    object.MoveArtifacts()
+    core.MoveArtifacts()
     //termbox.Flush()
     time.Sleep(50*time.Millisecond)
   }
