@@ -1,12 +1,13 @@
 package main
 
 import (
-  "board"
-  "core"
+  "fmt"
   "time"
   "math/rand"
-  "artifact"
   _"github.com/nsf/termbox-go"
+  "artifact"
+  "board"
+  "core"
 )
 
 func init() {
@@ -15,8 +16,8 @@ func init() {
 func main(){
 
   numSlots := 2
-  slot := 0
-  artifacts := 2000
+  slot := 1
+  artifacts := 1
   width := 4000
   height := 1000
 
@@ -36,14 +37,16 @@ func main(){
   go core.Run()
 
   for i:=0; i<artifacts; i++ {
-    artifact := artifact.NewArtifact(i, "cosa", float32(rand.Intn(width)),
-                                                float32(rand.Intn(height)),
+    x, y := core.View().RandomPos()
+    artifact := artifact.NewArtifact(i, "cosa", x, y,
                                                 -3.0 + float32(rand.Intn(6)),
                                                 -2.0 + float32(rand.Intn(4)),
                                                 0.0, 0.0 )
-                                                //-0.1 + rand.Float32()/10.0,
-                                                //-0.1 + rand.Float32()/10.0)
+
     board.AddArtifact(artifact)
+    ISeeYou := core.View().ISeeYou(artifact)
+    fmt.Printf("[%f, %f] -> %t\n", artifact.X(), artifact.Y(), ISeeYou)
+
   }
 
   for {

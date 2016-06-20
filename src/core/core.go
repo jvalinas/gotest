@@ -46,6 +46,10 @@ func (core *Core) Collitions(current *artifact.Artifact) {
   }
 }
 
+func (core *Core) View() *view.View {
+  return core.view
+}
+
 func (core *Core) MoveArtifacts() {
   board := core.board
   board.SetSize(termbox.Size())
