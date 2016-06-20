@@ -27,7 +27,7 @@ func NewCore( numSlots int, slot int, board *board.Board ) *Core {
      core.numSlots = numSlots
      core.slot = slot
      core.view = view.NewView(numSlots, slot, board)
-     core.canvas = canvas.NewCanvas(100, 70)
+     core.canvas = canvas.NewCanvas(termbox.Size())
      return core
 }
 
@@ -73,7 +73,7 @@ func (core *Core) Run() {
     termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
     core.MoveArtifacts()
     termbox.Flush()
-    time.Sleep(50*time.Millisecond)
+    time.Sleep(10*time.Millisecond)
   }
 }
 

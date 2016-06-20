@@ -13,20 +13,18 @@ func init() {
 
 func main(){
 
-  numSlots := 2
-  slot := 1
-  artifacts := 1
-  width := 1000
-  height := 500
+  numSlots := 1
+  slot := 0
+  artifacts := 50
+  width := 2000
+  height := 1000
 
-  /*
   err := termbox.Init()
   if err != nil {
     panic(err)
   }
   termbox.HideCursor()
   defer termbox.Close()
-  */
 
   board := board.NewBoard(width, height)
   core := core.NewCore(numSlots, slot, board)
@@ -35,8 +33,8 @@ func main(){
   for i:=0; i<artifacts; i++ {
     x, y := core.View().RandomPos()
     artifact := artifact.NewArtifact(i, "cosa", x, y,
-                                                -50.0 + 100.0*rand.Float32(),
-                                                -50.0 + 100.0*rand.Float32(),
+                                                -10.0 + 20.0*rand.Float32(),
+                                                -10.0 + 20.0*rand.Float32(),
                                                 0.0, 0.0 )
 
     board.AddArtifact(artifact)

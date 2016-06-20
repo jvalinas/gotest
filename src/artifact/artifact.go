@@ -60,8 +60,7 @@ func (object *Artifact) Pulse(width int, height int) {
 }
 
 func (object Artifact) Color() termbox.Attribute {
-  return termbox.ColorRed
-  //return object.color
+  return object.color
 }
 
 func (object *Artifact) SetColor(color termbox.Attribute) {
