@@ -1,7 +1,6 @@
 package main
 
 import (
-  "time"
   "math/rand"
   "github.com/nsf/termbox-go"
   "artifact"
@@ -34,15 +33,19 @@ func main(){
   for i:=0; i<artifacts; i++ {
     x, y := core.View().RandomPos()
     artifact := artifact.NewArtifact(i, "cosa", x, y,
-                                                -3.0 + 6.0*rand.Float32(),
-                                                -2.0 + 4.0*rand.Float32(),
+                                                -50.0 + 100.0*rand.Float32(),
+                                                -50.0 + 100.0*rand.Float32(),
                                                 0.0, 0.0 )
 
     board.AddArtifact(artifact)
   }
 
   for {
-    time.Sleep(10*time.Second)
+    event := termbox.PollEvent()
+    if event.Type == termbox.EventResize {
+    }
+    if event.Type == termbox.EventKey {
+      break
+    }
   }
-
 }

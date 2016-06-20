@@ -73,7 +73,7 @@ func (core *Core) Run() {
     termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
     core.MoveArtifacts()
     termbox.Flush()
-    time.Sleep(1*time.Second)
+    time.Sleep(50*time.Millisecond)
   }
 }
 
