@@ -55,7 +55,9 @@ func (core *Core) MoveArtifacts() {
   board.SetSize(termbox.Size())
 
   for _, artifact := range board.Artifacts() {
-    artifact.Pulse(board.Width(), board.Height())
+    if core.View().ISeeYou(artifact) {
+      artifact.Pulse(board.Width(), board.Height())
+    }
     //x := int(artifact.X())
     //y := int(artifact.Y())
     //termbox.SetCell(x, y, 0x2500, artifact.Color(), artifact.Color())
