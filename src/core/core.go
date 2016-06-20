@@ -41,16 +41,15 @@ func (core *Core) Collitions(current *artifact.Artifact) {
 
 func (core *Core) MoveArtifacts() {
   board := core.board
-  width, height := termbox.Size()
-  board.SetSize(width, height)
+  board.SetSize(termbox.Size())
 
-  for _, art := range board.Artifacts() {
-    art.Pulse(width, height)
-    x := int(art.X())
-    y := int(art.Y())
-    termbox.SetCell(x, y, 0x2500, art.Color(), art.Color())
-    if art.Color() != termbox.ColorRed {
-      core.Collitions(art)
+  for _, artifact := range board.Artifacts() {
+    artifact.Pulse(board.Width(), board.Height())
+    x := int(artifact.X())
+    y := int(artifact.Y())
+    termbox.SetCell(x, y, 0x2500, artifact.Color(), artifact.Color())
+    if artifact.Color() != termbox.ColorRed {
+      core.Collitions(artifact)
     }
 }
 }
