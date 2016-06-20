@@ -47,7 +47,7 @@ func (object *Artifact) Pulse(width int, height int) {
     object.dX = -object.dX
   }
 
-  if object.y + object.dY > float32(height-1) || object.y + object.dY < 0 {
+  if object.y + object.dY > float32(height-1) || object.y + object.dY < 0.0 {
     object.dY = -object.dY
   }
 

@@ -16,15 +16,17 @@ func main(){
   numSlots := 2
   slot := 1
   artifacts := 1
-  width := 4000
-  height := 1000
+  width := 1000
+  height := 500
 
+  /*
   err := termbox.Init()
   if err != nil {
     panic(err)
   }
   termbox.HideCursor()
   defer termbox.Close()
+  */
 
   board := board.NewBoard(width, height)
   core := core.NewCore(numSlots, slot, board)
