@@ -1,7 +1,6 @@
 package view
 
 import (
-  "fmt"
   "board"
   "artifact"
   "math/rand"
@@ -11,6 +10,7 @@ func init() {
 }
 
 type View struct{
+  slot int
   x0 int
   x1 int
   y0 int
@@ -38,20 +38,26 @@ func NewView(numSlots int, slot int, board *board.Board) *View {
      view.x1 = view.x0 + slotSize
      view.y0 = 0
      view.y1 = board.Height()
-
-     fmt.Println("Slot:", slot,
-       "x0:", view.x0,
-       "x1:", view.x1,
-       "y0:", view.y0,
-       "y1:", view.y1)
-
+     view.slot = slot
      return view
 }
 
-func (this *View) Width() int {
+func (this View) Slot() int {
+  return this.slot
+}
+
+func (this View) Width() int {
   return this.x1 - this.x0
 }
 
-func (this *View) Height() int {
+func (this View) Height() int {
   return this.y1 - this.y0
+}
+
+func (this View) X0() int {
+  return this.x0
+}
+
+func (this View) Y0() int {
+  return this.y0
 }

@@ -21,8 +21,6 @@ func NewBoard(width int, height int) *Board {
     b.width = width
     b.height = height
     b.artifacts = make(map[int]*artifact.Artifact)
-
-    // b.buffer = make([]byte, b.width*b.height)
     return b
 }
 
@@ -44,6 +42,5 @@ func (board Board) Artifacts() map[int]*artifact.Artifact {
 }
 
 func (board Board) AddArtifact(value *artifact.Artifact) {
-  //artf := artifact.Artifact(*value)
   board.artifacts[value.Id()] = value
 }

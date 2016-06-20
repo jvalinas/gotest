@@ -5,6 +5,7 @@ import (
   "os/exec"
   "board"
   "view"
+  "canvas"
   "github.com/nsf/termbox-go"
   "artifact"
 )
@@ -17,6 +18,7 @@ type Core struct {
   numSlots int
   slot int
   view *view.View
+  canvas *canvas.Canvas
 }
 
 func NewCore( numSlots int, slot int, board *board.Board ) *Core {
@@ -25,6 +27,7 @@ func NewCore( numSlots int, slot int, board *board.Board ) *Core {
      core.numSlots = numSlots
      core.slot = slot
      core.view = view.NewView(numSlots, slot, board)
+     core.canvas = canvas.NewCanvas(100, 70)
      return core
 }
 
@@ -34,8 +37,8 @@ func (core *Core) Collitions(current *artifact.Artifact) {
       continue
     }
     if current.X() == artifact.X() && current.Y() == artifact.Y() {
-      //current.SetColor(termbox.ColorRed)
-      //artifact.SetColor(termbox.ColorRed)
+      current.SetColor(termbox.ColorRed)
+      artifact.SetColor(termbox.ColorRed)
       current.SetdX(0.0)
       current.SetdY(0.0)
       artifact.SetdX(0.0)
@@ -52,27 +55,25 @@ func (core *Core) View() *view.View {
 
 func (core *Core) MoveArtifacts() {
   board := core.board
-  board.SetSize(termbox.Size())
 
   for _, artifact := range board.Artifacts() {
     if core.View().ISeeYou(artifact) {
       artifact.Pulse(board.Width(), board.Height())
+      if artifact.Color() != termbox.ColorRed {
+          core.Collitions(artifact)
+      }
+      core.canvas.Draw(core.view, artifact)
     }
-    //x := int(artifact.X())
-    //y := int(artifact.Y())
-    //termbox.SetCell(x, y, 0x2500, artifact.Color(), artifact.Color())
-    //if artifact.Color() != termbox.ColorRed {
-    //    core.Collitions(artifact)
-    //}
+
 }
 }
 
 func (core *Core) Run() {
   for{
-    //termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+    termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
     core.MoveArtifacts()
-    //termbox.Flush()
-    time.Sleep(50*time.Millisecond)
+    termbox.Flush()
+    time.Sleep(1*time.Second)
   }
 }
 

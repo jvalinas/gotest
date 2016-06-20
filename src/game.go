@@ -1,10 +1,9 @@
 package main
 
 import (
-  "fmt"
   "time"
   "math/rand"
-  _"github.com/nsf/termbox-go"
+  "github.com/nsf/termbox-go"
   "artifact"
   "board"
   "core"
@@ -21,16 +20,12 @@ func main(){
   width := 4000
   height := 1000
 
-  /*
   err := termbox.Init()
   if err != nil {
     panic(err)
   }
   termbox.HideCursor()
   defer termbox.Close()
-  */
-
-  //width, height := termbox.Size()
 
   board := board.NewBoard(width, height)
   core := core.NewCore(numSlots, slot, board)
@@ -39,14 +34,11 @@ func main(){
   for i:=0; i<artifacts; i++ {
     x, y := core.View().RandomPos()
     artifact := artifact.NewArtifact(i, "cosa", x, y,
-                                                -3.0 + float32(rand.Intn(6)),
-                                                -2.0 + float32(rand.Intn(4)),
+                                                -3.0 + 6.0*rand.Float32(),
+                                                -2.0 + 4.0*rand.Float32(),
                                                 0.0, 0.0 )
 
     board.AddArtifact(artifact)
-    ISeeYou := core.View().ISeeYou(artifact)
-    fmt.Printf("[%f, %f] -> %t\n", artifact.X(), artifact.Y(), ISeeYou)
-
   }
 
   for {
