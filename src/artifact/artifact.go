@@ -8,16 +8,20 @@ import (
 func init() {
 }
 
+type artifact struct {
+  Id int
+  Name string
+  X float32
+  Y float32
+  DX float32
+  DY float32
+  AX float32
+  AY float32
+  //color termbox.Attribute
+}
+
 type Artifact struct {
-  id int
-  name string
-  x float32
-  y float32
-  dX float32
-  dY float32
-  aX float32
-  aY float32
-  color termbox.Attribute
+  artifact artifact
 }
 
 func NewArtifact(
@@ -30,73 +34,73 @@ func NewArtifact(
    aX float32,
    aY float32) *Artifact {
      object := new(Artifact)
-     object.id = id
-     object.x = x
-     object.y = y
-     object.dX = dX
-     object.dY = dY
-     object.aX = aX
-     object.aY = aY
-     object.color = termbox.ColorYellow
+     object.Id = id
+     object.X = x
+     object.Y = y
+     object.DX = dX
+     object.DY = dY
+     object.AX = aX
+     object.AY = aY
+     //object.color = termbox.ColorYellow
      return object
 }
 
 func (object *Artifact) Pulse(width int, height int) {
 
-  if object.x + object.dX > float32(width-1) || object.x + object.dX < 0.0 {
-    object.dX = -object.dX
+  if object.artifact.X + object.artifact.DX > float32(width-1) || object.artifact.X + object.artifact.DX < 0.0 {
+    object.artifact.DX = -object.artifact.DX
   }
 
-  if object.y + object.dY > float32(height-1) || object.y + object.dY < 0.0 {
-    object.dY = -object.dY
+  if object.artifact.Y + object.artifact.DY > float32(height-1) || object.artifact.Y + object.artifact.DY < 0 {
+    object.artifact.DY = -object.artifact.DY
   }
 
-  object.x += object.dX
-  object.y += object.dY
+  object.artifact.X += object.artifact.DX
+  object.artifact.Y += object.artifact.DY
 
-  object.dX += object.aX
-  object.dY += object.aY
-
+  object.artifact.DX += object.artifact.AX
+  object.artifact.DY += object.artifact.AY
 }
 
 func (object Artifact) Color() termbox.Attribute {
-  return object.color
+  return termbox.ColorRed
+  //return object.artifact.color
 }
 
 func (object *Artifact) SetColor(color termbox.Attribute) {
-  object.color = color
+  //object.artifact.color = color
 }
 
 func (object Artifact) Id() int {
-  return object.id
+  return object.artifact.Id
 }
 
 func (object Artifact) Name() string {
-  return object.name
+  return object.artifact.Name
 }
 
 func (object Artifact) X() float32 {
-  return object.x
+  return object.artifact.X
 }
 
 func (object Artifact) Y() float32 {
-  return object.y
+  return object.artifact.Y
 }
 
 func (object Artifact) DX() float32 {
-  return object.dX
+  return object.artifact.DX
 }
 
 func (object *Artifact) SetdX(dX float32) {
-  object.dX = dX
+  object.artifact.dX = DX
 }
 
 func (object Artifact) DY() float32 {
-  return object.dY
+  return object.artifact.DY
 }
 
 func (object *Artifact) SetdY(dY float32) {
-  object.dY = dY
+  object.artifact.DY = dY
 }
 
 ////////////////////////////////////////////////////////////////////////////
