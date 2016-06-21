@@ -1,11 +1,14 @@
 package main
 
 import (
+  _"fmt"
   "math/rand"
   "github.com/nsf/termbox-go"
   "artifact"
   "board"
   "core"
+  "netinfo"
+  "network"
 )
 
 func init() {
@@ -18,6 +21,9 @@ func main(){
   artifacts := 50
   width := 1000
   height := 1000
+  serverIp := "172.17.0.3:10001"
+  localAddr := ":10001"
+  //fmt.Println("ServerIP: ", serverIp)
 
   err := termbox.Init()
   if err != nil {
@@ -28,7 +34,11 @@ func main(){
 
   board := board.NewBoard(width, height)
   core := core.NewCore(numSlots, slot, board)
-  go core.Run()
+  queue1 := make(chan netinfo.NetPackage, 100)
+  queue2 := make(chan netinfo.NetPackage, 100)
+  go core.Run(queue1)
+  go network.ServerStart(localAddr, queue2)
+  go network.ClientStart(serverIp, queue1)
 
   for i:=0; i<artifacts; i++ {
     x, y := core.View().RandomPos()

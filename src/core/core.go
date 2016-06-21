@@ -9,6 +9,7 @@ import (
   "view"
   "canvas"
   "artifact"
+  "netinfo"
 )
 
 func init() {
@@ -70,25 +71,31 @@ func (core *Core) View() *view.View {
   return core.view
 }
 
-func (core *Core) MoveArtifacts() {
+func (core *Core) MoveArtifacts() map[int]*artifact.Artifact {
   board := core.board
+  board.SetSize(termbox.Size())
+  artifacts := make(map[int]*artifact.Artifact)
 
   for _, artifact := range board.Artifacts() {
     if core.View().ISeeYou(artifact) {
       artifact.Pulse(board.Width(), board.Height())
+      artifacts[artifact.Id()] = artifact
       core.canvas.Draw(core.view, artifact)
       if artifact.Color() != termbox.ColorRed {
           core.Collitions(artifact)
       }
     }
-
+  }
+  return artifacts
 }
-}
 
-func (core *Core) Run() {
+func (core *Core) Run(queue chan netinfo.NetPackage) {
   for{
     termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-    core.MoveArtifacts()
+    artifacts_moved := core.MoveArtifacts()
+    info := netinfo.NewNetPackage(core.slot, artifacts_moved)
+    queue <- info
+
     termbox.Flush()
     time.Sleep(10*time.Millisecond)
   }
