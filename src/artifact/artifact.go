@@ -13,6 +13,7 @@ type artifact struct {
   Name string
   X float32
   Y float32
+  R float32
   DX float32
   DY float32
   AX float32
@@ -29,6 +30,7 @@ func NewArtifact(
    name string,
    x float32,
    y float32,
+   r float32,
    dX float32,
    dY float32,
    aX float32,
@@ -37,6 +39,7 @@ func NewArtifact(
      object.artifact.Id = id
      object.artifact.X = x
      object.artifact.Y = y
+     object.artifact.R = r
      object.artifact.DX = dX
      object.artifact.DY = dY
      object.artifact.AX = aX
@@ -67,7 +70,7 @@ func (object Artifact) Color() termbox.Attribute {
 }
 
 func (object *Artifact) SetColor(color termbox.Attribute) {
-  //object.artifact.color = color
+  object.artifact.Color = color
 }
 
 func (object Artifact) Id() int {
@@ -86,6 +89,10 @@ func (object Artifact) Y() float32 {
   return object.artifact.Y
 }
 
+func (object Artifact) R() float32 {
+  return object.artifact.R
+}
+
 func (object Artifact) DX() float32 {
   return object.artifact.DX
 }
@@ -100,35 +107,6 @@ func (object Artifact) DY() float32 {
 
 func (object *Artifact) SetdY(dY float32) {
   object.artifact.DY = dY
-}
-
-////////////////////////////////////////////////////////////////////////////
-
-type Ball struct {
-  artifact *Artifact
-  color string
-}
-
-func NewBall(
-   id int,
-   name string,
-   x float32,
-   y float32,
-   dX float32,
-   dY float32,
-   color string) *Ball {
-     object := new(Ball)
-     object.artifact = NewArtifact(id, name, x, y, dX, dY, 0.0, 0.0)
-     object.color = color
-     return object
-}
-
-func (ball Ball) Artifact() *Artifact {
-  return ball.artifact
-}
-
-func (ball Ball) Color() string {
-  return ball.color
 }
 
 ////////////////////////////////////////////////////////////////////////////

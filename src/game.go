@@ -33,6 +33,7 @@ func main(){
   for i:=0; i<artifacts; i++ {
     x, y := core.View().RandomPos()
     artifact := artifact.NewArtifact(i, "cosa", x, y,
+                                                10.0,
                                                 -10.0 + 20.0*rand.Float32(),
                                                 -10.0 + 20.0*rand.Float32(),
                                                 0.0, 0.0 )

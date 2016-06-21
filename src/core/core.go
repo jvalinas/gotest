@@ -3,10 +3,11 @@ package core
 import (
   "time"
   "os/exec"
+  "math"
+  "github.com/nsf/termbox-go"
   "board"
   "view"
   "canvas"
-  "github.com/nsf/termbox-go"
   "artifact"
 )
 
@@ -36,7 +37,13 @@ func (core *Core) Collitions(current *artifact.Artifact) {
     if current == artifact {
       continue
     }
-    if current.X() == artifact.X() && current.Y() == artifact.Y() {
+
+    // Calc distance between centers
+    b := float64(current.X() - artifact.X())
+    a := float64(current.Y() - artifact.Y())
+    distance := math.Sqrt(math.Pow(b, 2) + math.Pow(a, 2))
+
+    if float32(distance) < current.R() + artifact.R() {
       current.SetColor(termbox.ColorRed)
       artifact.SetColor(termbox.ColorRed)
       current.SetdX(0.0)
