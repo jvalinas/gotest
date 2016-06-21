@@ -17,7 +17,7 @@ type artifact struct {
   DY float32
   AX float32
   AY float32
-  //color termbox.Attribute
+  Color termbox.Attribute
 }
 
 type Artifact struct {
@@ -34,14 +34,14 @@ func NewArtifact(
    aX float32,
    aY float32) *Artifact {
      object := new(Artifact)
-     object.Id = id
-     object.X = x
-     object.Y = y
-     object.DX = dX
-     object.DY = dY
-     object.AX = aX
-     object.AY = aY
-     //object.color = termbox.ColorYellow
+     object.artifact.Id = id
+     object.artifact.X = x
+     object.artifact.Y = y
+     object.artifact.DX = dX
+     object.artifact.DY = dY
+     object.artifact.AX = aX
+     object.artifact.AY = aY
+     object.artifact.Color = termbox.ColorYellow
      return object
 }
 
@@ -63,8 +63,7 @@ func (object *Artifact) Pulse(width int, height int) {
 }
 
 func (object Artifact) Color() termbox.Attribute {
-  return termbox.ColorRed
-  //return object.artifact.color
+  return object.artifact.Color
 }
 
 func (object *Artifact) SetColor(color termbox.Attribute) {
@@ -92,7 +91,7 @@ func (object Artifact) DX() float32 {
 }
 
 func (object *Artifact) SetdX(dX float32) {
-  object.artifact.dX = DX
+  object.artifact.DX = dX
 }
 
 func (object Artifact) DY() float32 {
