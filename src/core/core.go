@@ -73,7 +73,6 @@ func (core *Core) View() *view.View {
 
 func (core *Core) MoveArtifacts() map[int]*artifact.Artifact {
   board := core.board
-  board.SetSize(termbox.Size())
   artifacts := make(map[int]*artifact.Artifact)
 
   for _, artifact := range board.Artifacts() {
@@ -92,12 +91,20 @@ func (core *Core) MoveArtifacts() map[int]*artifact.Artifact {
 func (core *Core) Run(queue chan netinfo.NetPackage) {
   for{
     termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-    artifacts_moved := core.MoveArtifacts()
-    info := netinfo.NewNetPackage(core.slot, artifacts_moved)
+    artifactsMoved := core.MoveArtifacts()
+    info := netinfo.NewNetPackage(core.slot, artifactsMoved)
     queue <- info
 
     termbox.Flush()
     time.Sleep(10*time.Millisecond)
+  }
+}
+
+func (core *Core) UpdateBoard(queue chan netinfo.NetPackage) {
+  //var netPkg netinfo.NetPackage
+  for {
+    netPkg := <-queue
+    core.board.MergeArtifacts(netPkg.Artifacts)
   }
 }
 
