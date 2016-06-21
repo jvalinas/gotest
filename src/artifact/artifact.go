@@ -109,6 +109,16 @@ func (object *Artifact) SetdY(dY float32) {
   object.artifact.DY = dY
 }
 
+func (object *Artifact) SetPos(x float32, y float32) {
+  object.artifact.X = x
+  object.artifact.Y = y
+}
+
+func (object Artifact) Pos() (float32, float32) {
+  return object.artifact.X, object.artifact.Y
+}
+
+
 ////////////////////////////////////////////////////////////////////////////
 
 func main(){

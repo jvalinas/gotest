@@ -43,6 +43,16 @@ func (core *Core) Collitions(current *artifact.Artifact) {
     a := float64(current.Y() - artifact.Y())
     distance := math.Sqrt(math.Pow(b, 2) + math.Pow(a, 2))
 
+    // Probe of close but not collitioning objects
+    if float32(distance) < current.R() + artifact.R() + 20.0 {
+      if current.Color() == termbox.ColorYellow {
+        current.SetColor(termbox.ColorCyan)
+      }
+      if artifact.Color() == termbox.ColorYellow {
+        artifact.SetColor(termbox.ColorCyan)
+      }
+    }
+
     if float32(distance) < current.R() + artifact.R() {
       current.SetColor(termbox.ColorRed)
       artifact.SetColor(termbox.ColorRed)

@@ -15,8 +15,8 @@ func main(){
 
   numSlots := 1
   slot := 0
-  artifacts := 50
-  width := 2000
+  artifacts := 5
+  width := 1000
   height := 1000
 
   err := termbox.Init()

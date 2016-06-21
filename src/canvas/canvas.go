@@ -52,5 +52,5 @@ func (this Canvas) Draw(view *view.View, artifact *artifact.Artifact) {
     x, y)
   */
 
-  termbox.SetCell(x, y, 0x2500, artifact.Color(), artifact.Color())
+  termbox.SetCell(x, y, 0x0298, artifact.Color(), termbox.ColorDefault)
 }
