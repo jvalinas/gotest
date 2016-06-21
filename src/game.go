@@ -15,7 +15,7 @@ func main(){
 
   numSlots := 1
   slot := 0
-  artifacts := 5
+  artifacts := 50
   width := 1000
   height := 1000
 
@@ -33,7 +33,7 @@ func main(){
   for i:=0; i<artifacts; i++ {
     x, y := core.View().RandomPos()
     artifact := artifact.NewArtifact(i, "cosa", x, y,
-                                                10.0,
+                                                5.0,
                                                 -10.0 + 20.0*rand.Float32(),
                                                 -10.0 + 20.0*rand.Float32(),
                                                 0.0, 0.0 )

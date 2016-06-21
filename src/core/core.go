@@ -76,10 +76,10 @@ func (core *Core) MoveArtifacts() {
   for _, artifact := range board.Artifacts() {
     if core.View().ISeeYou(artifact) {
       artifact.Pulse(board.Width(), board.Height())
+      core.canvas.Draw(core.view, artifact)
       if artifact.Color() != termbox.ColorRed {
           core.Collitions(artifact)
       }
-      core.canvas.Draw(core.view, artifact)
     }
 
 }
