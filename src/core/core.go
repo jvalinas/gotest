@@ -60,12 +60,18 @@ func (core *Core) Collitions(current *artifact.Artifact) {
       //current.SetdY(0.0)
       //artifact.SetdX(0.0)
       //artifact.SetdY(0.0)
-      current.SetCountdown(10)
-      artifact.SetCountdown(10)
-      current.SetdX(-current.DX())
-      current.SetdY(-current.DY())
-      artifact.SetdX(-artifact.DX())
-      artifact.SetdY(-artifact.DY())
+      current.SetCountdown(50)
+      artifact.SetCountdown(50)
+
+      if current.X() * artifact.X() < 0 {
+        current.SetdX(-current.DX())
+        artifact.SetdX(-artifact.DX())
+      }
+      if current.Y() * artifact.Y() < 0 {
+        current.SetdY(-current.DY())
+        artifact.SetdY(-artifact.DY())
+      }
+
       cmd := exec.Command("/usr/bin/beep")
       cmd.Start()
     }
@@ -104,7 +110,7 @@ func (core *Core) Run() {
     termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
     core.MoveArtifacts()
     termbox.Flush()
-    time.Sleep(30*time.Millisecond)
+    time.Sleep(20*time.Millisecond)
   }
 }
 
