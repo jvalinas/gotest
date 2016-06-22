@@ -44,7 +44,7 @@ func (core *Core) Collitions(current *artifact.Artifact) {
     distance := math.Sqrt(math.Pow(b, 2) + math.Pow(a, 2))
 
     // Probe of close but not collitioning objects
-    if float32(distance) < current.R() + artifact.R() + 20.0 {
+    if float32(distance) < current.R() + artifact.R() + 2.0 {
       if current.Color() == termbox.ColorYellow {
         current.SetColor(termbox.ColorCyan)
       }
@@ -56,10 +56,16 @@ func (core *Core) Collitions(current *artifact.Artifact) {
     if float32(distance) < current.R() + artifact.R() {
       current.SetColor(termbox.ColorRed)
       artifact.SetColor(termbox.ColorRed)
-      current.SetdX(0.0)
-      current.SetdY(0.0)
-      artifact.SetdX(0.0)
-      artifact.SetdY(0.0)
+      //current.SetdX(0.0)
+      //current.SetdY(0.0)
+      //artifact.SetdX(0.0)
+      //artifact.SetdY(0.0)
+      current.SetCountdown(10)
+      artifact.SetCountdown(10)
+      current.SetdX(-current.DX())
+      current.SetdY(-current.DY())
+      artifact.SetdX(-artifact.DX())
+      artifact.SetdY(-artifact.DY())
       cmd := exec.Command("/usr/bin/beep")
       cmd.Start()
     }
@@ -70,19 +76,27 @@ func (core *Core) View() *view.View {
   return core.view
 }
 
+func (core *Core) Canvas() *canvas.Canvas {
+  return core.canvas
+}
+
+func (core *Core) MoveArtifact(artifact *artifact.Artifact) {
+  board := core.board
+  if core.View().ISeeYou(artifact) {
+    artifact.Pulse(board.Width(), board.Height())
+    core.canvas.Draw(core.view, artifact)
+    //if artifact.Color() != termbox.ColorRed {
+    core.Collitions(artifact)
+    //}
+  }
+}
+
+
 func (core *Core) MoveArtifacts() {
   board := core.board
-
   for _, artifact := range board.Artifacts() {
-    if core.View().ISeeYou(artifact) {
-      artifact.Pulse(board.Width(), board.Height())
-      core.canvas.Draw(core.view, artifact)
-      if artifact.Color() != termbox.ColorRed {
-          core.Collitions(artifact)
-      }
-    }
-
-}
+    core.MoveArtifact(artifact)
+  }
 }
 
 func (core *Core) Run() {
@@ -90,7 +104,7 @@ func (core *Core) Run() {
     termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
     core.MoveArtifacts()
     termbox.Flush()
-    time.Sleep(10*time.Millisecond)
+    time.Sleep(30*time.Millisecond)
   }
 }
 

@@ -34,6 +34,11 @@ func (this *Canvas) Height() int {
   return this.height
 }
 
+func (this *Canvas) Resize(width int, height int) {
+  this.width = width
+  this.height = height
+}
+
 func (this Canvas) Draw(view *view.View, artifact *artifact.Artifact) {
 
   xFactor := 1.0 / (float32(view.Width()) / float32(this.Width()))
@@ -52,5 +57,10 @@ func (this Canvas) Draw(view *view.View, artifact *artifact.Artifact) {
     x, y)
   */
 
-  termbox.SetCell(x, y, 0x004F, artifact.Color(), termbox.ColorDefault)
+  color := artifact.Color()
+  if artifact.Countdown() > 0 {
+    color = termbox.ColorWhite
+  }
+
+  termbox.SetCell(x, y, 0x004F, color, termbox.ColorDefault)
 }

@@ -18,6 +18,7 @@ type artifact struct {
   DY float32
   AX float32
   AY float32
+  Countdown int
   Color termbox.Attribute
 }
 
@@ -44,6 +45,7 @@ func NewArtifact(
      object.artifact.DY = dY
      object.artifact.AX = aX
      object.artifact.AY = aY
+     object.artifact.Countdown = 0
      object.artifact.Color = termbox.ColorYellow
      return object
 }
@@ -63,6 +65,11 @@ func (object *Artifact) Pulse(width int, height int) {
 
   object.artifact.DX += object.artifact.AX
   object.artifact.DY += object.artifact.AY
+
+  if object.artifact.Countdown > 0 {
+    object.artifact.Countdown -= 1
+  }
+
 }
 
 func (object Artifact) Color() termbox.Attribute {
@@ -71,6 +78,14 @@ func (object Artifact) Color() termbox.Attribute {
 
 func (object *Artifact) SetColor(color termbox.Attribute) {
   object.artifact.Color = color
+}
+
+func (object Artifact) Countdown() int {
+  return object.artifact.Countdown
+}
+
+func (object *Artifact) SetCountdown(counter int) {
+  object.artifact.Countdown = counter
 }
 
 func (object Artifact) Id() int {
