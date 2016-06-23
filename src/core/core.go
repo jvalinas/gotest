@@ -60,8 +60,8 @@ func (core *Core) Collitions(current *artifact.Artifact) {
       //current.SetdY(0.0)
       //artifact.SetdX(0.0)
       //artifact.SetdY(0.0)
-      current.SetCountdown(50)
-      artifact.SetCountdown(50)
+      current.SetCountdown(10)
+      artifact.SetCountdown(10)
 
       if current.X() * artifact.X() < 0 {
         current.SetdX(-current.DX())
@@ -110,7 +110,7 @@ func (core *Core) Run() {
     termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
     core.MoveArtifacts()
     termbox.Flush()
-    time.Sleep(20*time.Millisecond)
+    time.Sleep(50*time.Millisecond)
   }
 }
 
