@@ -45,7 +45,7 @@ func (core *Core) Collitions(current *artifact.Artifact) {
     distance := math.Sqrt(math.Pow(b, 2) + math.Pow(a, 2))
 
     // Probe of close but not collitioning objects
-    if float32(distance) < current.R() + artifact.R() + 20.0 {
+    if float32(distance) < current.R() + artifact.R() + 2.0 {
       if current.Color() == termbox.ColorYellow {
         current.SetColor(termbox.ColorCyan)
       }
@@ -57,10 +57,22 @@ func (core *Core) Collitions(current *artifact.Artifact) {
     if float32(distance) < current.R() + artifact.R() {
       current.SetColor(termbox.ColorRed)
       artifact.SetColor(termbox.ColorRed)
-      current.SetdX(0.0)
-      current.SetdY(0.0)
-      artifact.SetdX(0.0)
-      artifact.SetdY(0.0)
+      //current.SetdX(0.0)
+      //current.SetdY(0.0)
+      //artifact.SetdX(0.0)
+      //artifact.SetdY(0.0)
+      current.SetCountdown(10)
+      artifact.SetCountdown(10)
+
+      if current.X() * artifact.X() < 0 {
+        current.SetdX(-current.DX())
+        artifact.SetdX(-artifact.DX())
+      }
+      if current.Y() * artifact.Y() < 0 {
+        current.SetdY(-current.DY())
+        artifact.SetdY(-artifact.DY())
+      }
+
       cmd := exec.Command("/usr/bin/beep")
       cmd.Start()
     }
@@ -69,6 +81,10 @@ func (core *Core) Collitions(current *artifact.Artifact) {
 
 func (core *Core) View() *view.View {
   return core.view
+}
+
+func (core *Core) Canvas() *canvas.Canvas {
+  return core.canvas
 }
 
 func (core *Core) MoveArtifacts() map[int]*artifact.Artifact {
@@ -80,9 +96,9 @@ func (core *Core) MoveArtifacts() map[int]*artifact.Artifact {
       artifact.Pulse(board.Width(), board.Height())
       artifacts[artifact.Id()] = artifact
       core.canvas.Draw(core.view, artifact)
-      if artifact.Color() != termbox.ColorRed {
-          core.Collitions(artifact)
-      }
+      //if artifact.Color() != termbox.ColorRed {
+      core.Collitions(artifact)
+      //}
     }
   }
   return artifacts
@@ -96,7 +112,7 @@ func (core *Core) Run(queue chan netinfo.NetPackage) {
     queue <- info
 
     termbox.Flush()
-    time.Sleep(10*time.Millisecond)
+    time.Sleep(50*time.Millisecond)
   }
 }
 

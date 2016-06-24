@@ -38,6 +38,8 @@ func main(){
   termbox.HideCursor()
   defer termbox.Close()
 
+  width, height = termbox.Size()
+
   board := board.NewBoard(width, height)
   core := core.NewCore(numSlots, slot, board)
   queue1 := make(chan netinfo.NetPackage, 1000)
@@ -61,6 +63,7 @@ func main(){
   for {
     event := termbox.PollEvent()
     if event.Type == termbox.EventResize {
+      core.Canvas().Resize(termbox.Size())
     }
     if event.Type == termbox.EventKey {
       break
