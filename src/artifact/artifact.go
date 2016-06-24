@@ -3,6 +3,8 @@ package artifact
 import (
   "fmt"
   "github.com/nsf/termbox-go"
+  "encoding/gob"
+  "bytes"
 )
 
 func init() {
@@ -131,6 +133,33 @@ func (object *Artifact) SetPos(x float32, y float32) {
 
 func (object Artifact) Pos() (float32, float32) {
   return object.artifact.X, object.artifact.Y
+}
+
+func NewActifactFromBytes(data []byte) Artifact {
+  d := gob.NewDecoder(bytes.NewBuffer(data))
+
+  // Decoding the serialized data
+  var artifact artifact
+  err := d.Decode(&artifact)
+  if err != nil {
+      panic(err)
+  }
+
+  //fmt.Printf("%#v\n", artifact)
+  return Artifact{artifact: artifact}
+}
+
+func (a Artifact) Bytes() []byte{
+  data := new(bytes.Buffer)
+
+  e := gob.NewEncoder(data)
+
+  // Encoding
+  err := e.Encode(a.artifact)
+  if err != nil {
+      panic(err)
+  }
+  return data.Bytes()
 }
 
 

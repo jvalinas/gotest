@@ -44,3 +44,9 @@ func (board Board) Artifacts() map[int]*artifact.Artifact {
 func (board Board) AddArtifact(value *artifact.Artifact) {
   board.artifacts[value.Id()] = value
 }
+
+func (board Board) MergeArtifacts(artifacts map[int]*artifact.Artifact) {
+  for _, value := range artifacts {
+    board.artifacts[value.Id()] = value
+  }
+}

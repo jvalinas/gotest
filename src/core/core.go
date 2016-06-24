@@ -9,6 +9,7 @@ import (
   "view"
   "canvas"
   "artifact"
+  "netinfo"
 )
 
 func init() {
@@ -86,31 +87,40 @@ func (core *Core) Canvas() *canvas.Canvas {
   return core.canvas
 }
 
-func (core *Core) MoveArtifact(artifact *artifact.Artifact) {
+func (core *Core) MoveArtifacts() map[int]*artifact.Artifact {
   board := core.board
-  if core.View().ISeeYou(artifact) {
-    artifact.Pulse(board.Width(), board.Height())
-    core.canvas.Draw(core.view, artifact)
-    //if artifact.Color() != termbox.ColorRed {
-    core.Collitions(artifact)
-    //}
-  }
-}
+  artifacts := make(map[int]*artifact.Artifact)
 
-
-func (core *Core) MoveArtifacts() {
-  board := core.board
   for _, artifact := range board.Artifacts() {
-    core.MoveArtifact(artifact)
+    if core.View().ISeeYou(artifact) {
+      artifact.Pulse(board.Width(), board.Height())
+      artifacts[artifact.Id()] = artifact
+      core.canvas.Draw(core.view, artifact)
+      //if artifact.Color() != termbox.ColorRed {
+      core.Collitions(artifact)
+      //}
+    }
   }
+  return artifacts
 }
 
-func (core *Core) Run() {
+func (core *Core) Run(queue chan netinfo.NetPackage) {
   for{
     termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-    core.MoveArtifacts()
+    artifactsMoved := core.MoveArtifacts()
+    info := netinfo.NewNetPackage(core.slot, artifactsMoved)
+    queue <- info
+
     termbox.Flush()
     time.Sleep(50*time.Millisecond)
+  }
+}
+
+func (core *Core) UpdateBoard(queue chan netinfo.NetPackage) {
+  //var netPkg netinfo.NetPackage
+  for {
+    netPkg := <-queue
+    core.board.MergeArtifacts(netPkg.Artifacts)
   }
 }
 
