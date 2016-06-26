@@ -41,21 +41,15 @@ func (this *Canvas) Resize(width int, height int) {
 
 func (this Canvas) Draw(view *view.View, artifact *artifact.Artifact) {
 
-  xFactor := 1.0 / (float32(view.Width()) / float32(this.Width()))
-  yFactor := 1.0 / (float32(view.Height()) / float32(this.Height()))
-  relX := artifact.X() - float32(view.X0())
-  relY := artifact.Y() - float32(view.Y0())
+  pos := artifact.Pos()
+
+  xFactor := 1.0 / (float64(view.Width()) / float64(this.Width()))
+  yFactor := 1.0 / (float64(view.Height()) / float64(this.Height()))
+  relX := pos.X() - float64(view.X0())
+  relY := pos.Y() - float64(view.Y0())
 
   x := int(relX * xFactor)
   y := int(relY * yFactor)
-
-  /*
-  fmt.Printf("%f %f [%f, %f] -> [%f, %f] -> [%d, %d]\n",
-    xFactor, yFactor,
-    artifact.X(), artifact.Y(),
-    relX, relY,
-    x, y)
-  */
 
   color := artifact.Color()
   if artifact.Countdown() > 0 {

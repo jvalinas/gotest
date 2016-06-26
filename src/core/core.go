@@ -34,14 +34,20 @@ func NewCore( numSlots int, slot int, board *board.Board ) *Core {
 }
 
 func (core *Core) Collitions(current *artifact.Artifact) {
+
+  currentPos := current.Pos()
+
   for _, artifact := range core.board.Artifacts() {
     if current == artifact {
       continue
     }
 
+    artifactPos := artifact.Pos(
+
+    )
     // Calc distance between centers
-    b := float64(current.X() - artifact.X())
-    a := float64(current.Y() - artifact.Y())
+    b := float64(currentPos.X() - artifactPos.X())
+    a := float64(currentPos.Y() - artifactPos.Y())
     distance := math.Sqrt(math.Pow(b, 2) + math.Pow(a, 2))
 
     // Probe of close but not collitioning objects
@@ -57,20 +63,12 @@ func (core *Core) Collitions(current *artifact.Artifact) {
     if float32(distance) < current.R() + artifact.R() {
       current.SetColor(termbox.ColorRed)
       artifact.SetColor(termbox.ColorRed)
-      //current.SetdX(0.0)
-      //current.SetdY(0.0)
-      //artifact.SetdX(0.0)
-      //artifact.SetdY(0.0)
       current.SetCountdown(10)
       artifact.SetCountdown(10)
 
-      if current.X() * artifact.X() < 0 {
-        current.SetdX(-current.DX())
-        artifact.SetdX(-artifact.DX())
+      if currentPos.X() * artifactPos.X() < 0 {
       }
-      if current.Y() * artifact.Y() < 0 {
-        current.SetdY(-current.DY())
-        artifact.SetdY(-artifact.DY())
+      if currentPos.Y() * artifactPos.Y() < 0 {
       }
 
       cmd := exec.Command("/usr/bin/beep")
@@ -97,7 +95,7 @@ func (core *Core) MoveArtifacts() map[int]*artifact.Artifact {
       artifacts[artifact.Id()] = artifact
       core.canvas.Draw(core.view, artifact)
       //if artifact.Color() != termbox.ColorRed {
-      core.Collitions(artifact)
+      //core.Collitions(artifact)
       //}
     }
   }

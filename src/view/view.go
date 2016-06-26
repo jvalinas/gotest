@@ -17,17 +17,18 @@ type View struct{
   y1 int
 }
 
-func (view View) RandomPos() (float32, float32) {
-  x := float32(view.x0) + float32(view.x1 - view.x0)*rand.Float32()
-  y := float32(view.y0) + float32(view.y1 - view.y0)*rand.Float32()
+func (view View) RandomPos() (float64, float64) {
+  x := float64(view.x0) + float64(view.x1 - view.x0)*rand.Float64()
+  y := float64(view.y0) + float64(view.y1 - view.y0)*rand.Float64()
 
   return x, y
 }
 
 func (view View) ISeeYou(artifact *artifact.Artifact) bool {
 
-  return artifact.X() >= float32(view.x0) && artifact.X() <= float32(view.x1) &&
-     artifact.Y() >= float32(view.y0) && artifact.Y() <= float32(view.y1)
+  pos := artifact.Pos()
+  return pos.X() >= float64(view.x0) && pos.X() <= float64(view.x1) &&
+     pos.Y() >= float64(view.y0) && pos.Y() <= float64(view.y1)
 
 }
 

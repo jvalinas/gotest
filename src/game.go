@@ -7,6 +7,7 @@ import (
   "artifact"
   "board"
   "core"
+  "physics"
   "netinfo"
   "network"
   "os"
@@ -18,11 +19,11 @@ func init() {
 
 func main(){
 
-  numSlots := 2
+  numSlots := 1
   slot, _ := strconv.Atoi(os.Args[1])
-  artifacts := 100
-  width := 10000
-  height := 1000
+  artifacts := 50
+  width := 1000
+  height := 500
   serverIp := "172.17.0.7:10001"
   if slot == 1 {
     serverIp = "172.17.0.5:10001"
@@ -38,7 +39,7 @@ func main(){
   termbox.HideCursor()
   defer termbox.Close()
 
-  width, height = termbox.Size()
+  //width, height = termbox.Size()
 
   board := board.NewBoard(width, height)
   core := core.NewCore(numSlots, slot, board)
@@ -51,11 +52,12 @@ func main(){
 
   for i:=0; i<artifacts; i++ {
     x, y := core.View().RandomPos()
-    artifact := artifact.NewArtifact(i + slot * 1000, "cosa", x, y,
-                                                1.0,
-                                                -10.0 + 20.0*rand.Float32(),
-                                                -10.0 + 20.0*rand.Float32(),
-                                                0.0, 0.0 )
+    artifact := artifact.NewArtifact(i + slot * 1000, "cosa",
+                                     *physics.NewVector(x, y),
+                                     *physics.NewVector(-10.0 + 20.0*rand.Float64(),
+                                                        -10.0 + 20.0*rand.Float64()),
+                                      20 * rand.Float64(),
+                                      1.0)
 
     board.AddArtifact(artifact)
   }

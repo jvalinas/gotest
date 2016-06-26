@@ -5,6 +5,7 @@ import (
   "github.com/nsf/termbox-go"
   "encoding/gob"
   "bytes"
+  "physics"
 )
 
 func init() {
@@ -13,13 +14,10 @@ func init() {
 type artifact struct {
   Id int
   Name string
-  X float32
-  Y float32
+  Pos physics.Vector
+  Dir physics.Vector
+  Speed float64
   R float32
-  DX float32
-  DY float32
-  AX float32
-  AY float32
   Countdown int
   Color termbox.Attribute
 }
@@ -31,22 +29,16 @@ type Artifact struct {
 func NewArtifact(
    id int,
    name string,
-   x float32,
-   y float32,
-   r float32,
-   dX float32,
-   dY float32,
-   aX float32,
-   aY float32) *Artifact {
+   pos physics.Vector,
+   dir physics.Vector,
+   speed float64,
+   r float32) *Artifact {
      object := new(Artifact)
      object.artifact.Id = id
-     object.artifact.X = x
-     object.artifact.Y = y
+     object.artifact.Pos = pos
+     object.artifact.Dir = dir
+     object.artifact.Speed = speed
      object.artifact.R = r
-     object.artifact.DX = dX
-     object.artifact.DY = dY
-     object.artifact.AX = aX
-     object.artifact.AY = aY
      object.artifact.Countdown = 0
      object.artifact.Color = termbox.ColorYellow
      return object
@@ -54,19 +46,28 @@ func NewArtifact(
 
 func (object *Artifact) Pulse(width int, height int) {
 
-  if object.artifact.X + object.artifact.DX > float32(width-1) || object.artifact.X + object.artifact.DX < 0.0 {
-    object.artifact.DX = -object.artifact.DX
+  normDir := object.artifact.Dir.Normalize()
+  incPos := normDir.Scale(object.artifact.Speed)
+  newPos := object.artifact.Pos.Sum(incPos)
+
+  recalculate := false
+  if newPos.X()  > float64(width-1) || newPos.X() < 0.0 {
+    object.artifact.Dir.SetX(-object.artifact.Dir.X())
+    recalculate = true
   }
 
-  if object.artifact.Y + object.artifact.DY > float32(height-1) || object.artifact.Y + object.artifact.DY < 0 {
-    object.artifact.DY = -object.artifact.DY
+  if newPos.Y()  > float64(height-1) || newPos.Y() < 0.0 {
+    object.artifact.Dir.SetY(-object.artifact.Dir.Y())
+    recalculate = true
   }
 
-  object.artifact.X += object.artifact.DX
-  object.artifact.Y += object.artifact.DY
+  if recalculate {
+    normDir = object.artifact.Dir.Normalize()
+    incPos = normDir.Scale(object.artifact.Speed)
+    newPos = object.artifact.Pos.Sum(incPos)
+  }
 
-  object.artifact.DX += object.artifact.AX
-  object.artifact.DY += object.artifact.AY
+  object.artifact.Pos = newPos
 
   if object.artifact.Countdown > 0 {
     object.artifact.Countdown -= 1
@@ -98,41 +99,32 @@ func (object Artifact) Name() string {
   return object.artifact.Name
 }
 
-func (object Artifact) X() float32 {
-  return object.artifact.X
+func (object Artifact) Pos() physics.Vector {
+  return object.artifact.Pos
 }
 
-func (object Artifact) Y() float32 {
-  return object.artifact.Y
+func (object *Artifact) SetPos(pos physics.Vector) {
+  object.artifact.Pos = pos
+}
+
+func (object Artifact) Dir() physics.Vector {
+  return object.artifact.Dir
+}
+
+func (object *Artifact) SetDir(dir physics.Vector) {
+  object.artifact.Dir = dir
+}
+
+func (object Artifact) Speed() float64 {
+  return object.artifact.Speed
+}
+
+func (object *Artifact) SetSpeed(speed float64) {
+  object.artifact.Speed = speed
 }
 
 func (object Artifact) R() float32 {
   return object.artifact.R
-}
-
-func (object Artifact) DX() float32 {
-  return object.artifact.DX
-}
-
-func (object *Artifact) SetdX(dX float32) {
-  object.artifact.DX = dX
-}
-
-func (object Artifact) DY() float32 {
-  return object.artifact.DY
-}
-
-func (object *Artifact) SetdY(dY float32) {
-  object.artifact.DY = dY
-}
-
-func (object *Artifact) SetPos(x float32, y float32) {
-  object.artifact.X = x
-  object.artifact.Y = y
-}
-
-func (object Artifact) Pos() (float32, float32) {
-  return object.artifact.X, object.artifact.Y
 }
 
 func NewActifactFromBytes(data []byte) Artifact {
