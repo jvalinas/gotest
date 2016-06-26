@@ -8,28 +8,41 @@ import (
   "board"
   "core"
   "physics"
-  "netinfo"
-  "network"
+  "udpproto"
   "os"
+  "logging"
   "strconv"
 )
 
+const (
+  default_port="10001"
+  loggingFile="my_test.log"
+)
 func init() {
 }
 
 func main(){
 
-  numSlots := 1
-  slot, _ := strconv.Atoi(os.Args[1])
-  artifacts := 10
+  numSlots := 2
+  slot := 1
+  serverName := os.Args[1]
+  artifacts := 2
   width := 500
   height := 400
-  serverIp := "172.17.0.7:10001"
-  if slot == 1 {
-    serverIp = "172.17.0.5:10001"
+  var serverIp string
+  switch serverName {
+    case "Server1":
+      slot = 0
+      serverIp = "172.17.0.2:10001"
+    case "Server2":
+      slot = 1
+      serverIp = "172.17.0.1:10001"
   }
+  prefix := "[" + serverName + "] "
+  logging.Init(loggingFile, prefix)
 
-  localAddr := ":10001"
+  //localAddr := ":10001"
+  logging.Println("Server" + serverName + "started. Connecting to: ", serverIp)
   //fmt.Println("ServerIP: ", serverIp)
 
   err := termbox.Init()
@@ -42,12 +55,14 @@ func main(){
   //width, height = termbox.Size()
 
   board := board.NewBoard(width, height)
-  core := core.NewCore(numSlots, slot, board)
-  queue1 := make(chan netinfo.NetPackage, 1000)
-  queue2 := make(chan netinfo.NetPackage, 1000)
+  core := core.NewCore(numSlots, slot, board, serverName)
+  queue1 := make(chan udpproto.GamePkg, 1000)
+  queue2 := make(chan udpproto.GamePkg, 1000)
+  queue3 := make(chan udpproto.EventPkg, 1000)
   go core.Run(queue1)
-  go network.ServerStart(localAddr, queue2)
-  go network.ClientStart(serverIp, queue1)
+  udpproto.Start(serverIp, queue1, queue2, queue3)
+  //go network.ServerStart(localAddr, queue2)
+  //go network.ClientStart(serverIp, queue1)
   go core.UpdateBoard(queue2)
 
   for i:=0; i<artifacts; i++ {

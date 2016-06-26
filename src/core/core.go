@@ -10,13 +10,14 @@ import (
   "canvas"
   "artifact"
   "physics"
-  "netinfo"
+  "udpproto"
 )
 
 func init() {
 }
 
 type Core struct {
+  ServerName string
   board *board.Board
   numSlots int
   slot int
@@ -24,8 +25,9 @@ type Core struct {
   canvas *canvas.Canvas
 }
 
-func NewCore( numSlots int, slot int, board *board.Board ) *Core {
+func NewCore( numSlots int, slot int, board *board.Board, serverName string) *Core {
      core := new(Core)
+     core.ServerName = serverName
      core.board = board
      core.numSlots = numSlots
      core.slot = slot
@@ -109,19 +111,21 @@ func (core *Core) MoveArtifacts() map[int]*artifact.Artifact {
   return artifacts
 }
 
-func (core *Core) Run(queue chan netinfo.NetPackage) {
+func (core *Core) Run(queue chan udpproto.GamePkg) {
   for{
     termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
     artifactsMoved := core.MoveArtifacts()
-    info := netinfo.NewNetPackage(core.slot, artifactsMoved)
-    queue <- info
+    if len(artifactsMoved) != 0 {
+      info := udpproto.NewGamePkg(core.ServerName, artifactsMoved)
+      queue <- info
+    }
 
     termbox.Flush()
-    time.Sleep(50*time.Millisecond)
+    time.Sleep(100*time.Millisecond)
   }
 }
 
-func (core *Core) UpdateBoard(queue chan netinfo.NetPackage) {
+func (core *Core) UpdateBoard(queue chan udpproto.GamePkg) {
   //var netPkg netinfo.NetPackage
   for {
     netPkg := <-queue
