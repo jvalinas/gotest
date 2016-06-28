@@ -9,6 +9,7 @@ import (
   "view"
   "canvas"
   "artifact"
+  "physics"
   "netinfo"
 )
 
@@ -42,9 +43,8 @@ func (core *Core) Collitions(current *artifact.Artifact) {
       continue
     }
 
-    artifactPos := artifact.Pos(
+    artifactPos := artifact.Pos()
 
-    )
     // Calc distance between centers
     b := float64(currentPos.X() - artifactPos.X())
     a := float64(currentPos.Y() - artifactPos.Y())
@@ -52,23 +52,32 @@ func (core *Core) Collitions(current *artifact.Artifact) {
 
     // Probe of close but not collitioning objects
     if float32(distance) < current.R() + artifact.R() + 2.0 {
+
       if current.Color() == termbox.ColorYellow {
         current.SetColor(termbox.ColorCyan)
       }
+
       if artifact.Color() == termbox.ColorYellow {
         artifact.SetColor(termbox.ColorCyan)
       }
+
     }
 
     if float32(distance) < current.R() + artifact.R() {
       current.SetColor(termbox.ColorRed)
       artifact.SetColor(termbox.ColorRed)
-      current.SetCountdown(10)
-      artifact.SetCountdown(10)
 
-      if currentPos.X() * artifactPos.X() < 0 {
+      current.SetCountdown(20)
+      artifact.SetCountdown(20)
+
+      if current.Dir().X() * artifact.Dir().X() < 0 {
+        current.SetDir(*physics.NewVector(-current.Dir().X(), current.Dir().Y()))
+        artifact.SetDir(*physics.NewVector(-artifact.Dir().X(), artifact.Dir().Y()))
       }
-      if currentPos.Y() * artifactPos.Y() < 0 {
+
+      if current.Dir().Y() * artifact.Dir().Y() < 0 {
+        current.SetDir(*physics.NewVector(current.Dir().X(), -current.Dir().Y()))
+        artifact.SetDir(*physics.NewVector(artifact.Dir().X(), -artifact.Dir().Y()))
       }
 
       cmd := exec.Command("/usr/bin/beep")
@@ -94,9 +103,7 @@ func (core *Core) MoveArtifacts() map[int]*artifact.Artifact {
       artifact.Pulse(board.Width(), board.Height())
       artifacts[artifact.Id()] = artifact
       core.canvas.Draw(core.view, artifact)
-      //if artifact.Color() != termbox.ColorRed {
-      //core.Collitions(artifact)
-      //}
+      core.Collitions(artifact)
     }
   }
   return artifacts

@@ -21,9 +21,9 @@ func main(){
 
   numSlots := 1
   slot, _ := strconv.Atoi(os.Args[1])
-  artifacts := 50
-  width := 1000
-  height := 500
+  artifacts := 10
+  width := 500
+  height := 400
   serverIp := "172.17.0.7:10001"
   if slot == 1 {
     serverIp = "172.17.0.5:10001"
@@ -54,11 +54,10 @@ func main(){
     x, y := core.View().RandomPos()
     artifact := artifact.NewArtifact(i + slot * 1000, "cosa",
                                      *physics.NewVector(x, y),
-                                     *physics.NewVector(-10.0 + 20.0*rand.Float64(),
-                                                        -10.0 + 20.0*rand.Float64()),
+                                     *physics.NewVector(-1 + 2*rand.Float64(),
+                                                        -1 + 2*rand.Float64()),
                                       20 * rand.Float64(),
-                                      1.0)
-
+                                      5.0)
     board.AddArtifact(artifact)
   }
 
