@@ -54,6 +54,10 @@ func newDataPkgFomNetPkg(netDataPkg netDataPkg) *dataPkg {
   return &pkg
 }
 
+func (dp dataPkg) len() int {
+    return len(dp.data) + 1
+}
+
 func newNetDataPkgFromBytes(data []byte) netDataPkg {
   d := gob.NewDecoder(bytes.NewBuffer(data))
 
@@ -108,11 +112,12 @@ func proccessData(in chan GamePkg, out chan GamePkg, event chan EventPkg,
 
 func gameDataToPkg(gp GamePkg) dataPkg {
   pkgType := "gamedata"
-  data:= make([][]byte, len(gp.Artifacts))
+  data:= make([][]byte, 0, len(gp.Artifacts))
   for _, artifact := range gp.Artifacts {
+    //logging.Println("Appending data? ", artifact.Bytes())
     data = append(data, artifact.Bytes())
   }
-  logging.Println("gameToPkg: Data to send:", len(data))
+  logging.Println("gameToPkg: Artifacts: ", len(gp.Artifacts)," Data to send:", len(data))
   return newDataPkg(gp.ServerName, 0, pkgType, data)
 }
 
@@ -161,8 +166,8 @@ func serverStart(listenIp string, queue chan dataPkg) {
           pkg.data = append(pkg.data, data)
         }
       }
-
-      if len(pkg.data) == newPkg.Length {
+      //logging.Printf("New net package: %s of %s", len(pkg.data), newPkg.Length)
+      if pkg.len() == newPkg.Length {
         //logging.Printf("Received net data from %s: %v",pkg.name, pkg)
         queue <- *pkg
         delete(pkgs, pkgKey)
@@ -192,7 +197,7 @@ func sendNetPackage(Conn *net.UDPConn, dataPkg dataPkg)  {
   var ctam int
   length := len(dataPkg.data) + 1
   //numChunks := length/pkgLimit
-  logging.Println("data to send: ", len(dataPkg.data))
+  //logging.Println("data to send: ", len(dataPkg.data))
   if ctam = pkgLimit; length < pkgLimit {
     ctam = length
   }
@@ -209,12 +214,13 @@ func sendNetPackage(Conn *net.UDPConn, dataPkg dataPkg)  {
       chunks = make([][]byte, 0, ctam)
     }
     chunks = append(chunks, chunk)
+    //logging.Println("Adding chunk: ", chunk)
     i++
   }
   if len(chunks) != 0 {
     netPkg = netDataPkg{dataPkg.name, dataPkg.pkgType, length, chunks}
     //logging.Printf("Sending net data part from %s: %v",netPkg.Name, netPkg)
-    logging.Printf("Sending from %s: t: %s p: %s",netPkg.Name, netPkg.Length, len(netPkg.Data))
+    //logging.Printf("Sending from %s: t: %s p: %s",netPkg.Name, netPkg.Length, len(netPkg.Data))
     sendBytes(Conn, netPkg.Bytes())
   }
 }
@@ -224,7 +230,7 @@ func receivePkg(ServerConn *net.UDPConn) (string, netDataPkg) {
     data := readBytes(ServerConn)
     if data != nil {
       newPkg = newNetDataPkgFromBytes(data)
-      logging.Println(" Received from :", newPkg)
+      //logging.Println(" Received from :", newPkg)
       return "", newPkg
     }
     return "Non Data Received", newPkg
