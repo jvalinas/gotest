@@ -94,17 +94,17 @@ func proccessData(in chan GamePkg, out chan GamePkg, event chan EventPkg,
     select {
       case data := <- receivQueue:
         if data.pkgType == "gamedata" {
-          logging.Println("Receiving new package from: ",
-                          data.name, " with ",
-                          len(data.data), " artifacts.")
+          //logging.Println("Receiving new package from: ",
+          //                data.name, " with ",
+          //                len(data.data), " artifacts.")
           out <- pkgToGameData(data)
         } else {
           logging.Println("Unknown package type: ", data.pkgType)
         }
       case data := <- in:
-        logging.Println("Sending new package from: ",
-                        data.ServerName, " with ",
-                        len(data.Artifacts), " artifacts.")
+        //logging.Println("Sending new package from: ",
+        //                data.ServerName, " with ",
+        //                len(data.Artifacts), " artifacts.")
         sendQueue <- gameDataToPkg(data)
     }
   }
@@ -117,13 +117,13 @@ func gameDataToPkg(gp GamePkg) dataPkg {
     //logging.Println("Appending data? ", artifact.Bytes())
     data = append(data, artifact.Bytes())
   }
-  logging.Println("gameToPkg: Artifacts: ", len(gp.Artifacts)," Data to send:", len(data))
+  //logging.Println("gameToPkg: Artifacts: ", len(gp.Artifacts)," Data to send:", len(data))
   return newDataPkg(gp.ServerName, 0, pkgType, data)
 }
 
 func pkgToGameData(dp dataPkg) GamePkg {
   artifacts := make(map[int]*artifact.Artifact, len(dp.data))
-  logging.Printf("Processing data from %s: %v",dp.name, dp)
+  //logging.Printf("Processing data from %s: %v",dp.name, dp)
   for _, chunk := range dp.data {
     artifact := artifact.NewActifactFromBytes(chunk)
     artifacts[artifact.Id()] = &artifact
