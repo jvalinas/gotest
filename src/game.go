@@ -26,17 +26,17 @@ func main(){
   numSlots := 2
   slot := 1
   serverName := os.Args[1]
-  artifacts := 2
-  width := 500
-  height := 400
+  artifacts := 1
+  width := 10000
+  height := 1000
   var serverIp string
   switch serverName {
     case "Server1":
       slot = 0
-      serverIp = "172.17.0.2:10001"
+      serverIp = "172.17.0.3:10001"
     case "Server2":
       slot = 1
-      serverIp = "172.17.0.1:10001"
+      serverIp = "172.17.0.2:10001"
   }
   prefix := "[" + serverName + "] "
   logging.Init(loggingFile, prefix)
