@@ -10,6 +10,9 @@ import (
   "canvas"
   "artifact"
   "udpproto"
+  "strconv"
+  "player"
+  "logging"
 )
 
 func init() {
@@ -22,6 +25,7 @@ type Core struct {
   slot int
   view *view.View
   canvas *canvas.Canvas
+  players []*player.Player
 }
 
 func NewCore( numSlots int, slot int, board *board.Board, serverName string) *Core {
@@ -32,7 +36,15 @@ func NewCore( numSlots int, slot int, board *board.Board, serverName string) *Co
      core.slot = slot
      core.view = view.NewView(numSlots, slot, board)
      core.canvas = canvas.NewCanvas(termbox.Size())
+     players := make([]*player.Player, 0)
+     players = append(players, player.NewPlayer(1, serverName, slot))
+     core.players = players
      return core
+}
+
+func (core *Core) SetSlot(slot int) {
+  core.slot = slot
+  core.view = view.NewView(core.numSlots, slot, core.board)
 }
 
 func (core *Core) Collitions(current *artifact.Artifact) {
@@ -106,7 +118,7 @@ func (core *Core) MoveArtifacts() map[int]*artifact.Artifact {
   return artifacts
 }
 
-func (core *Core) Run(queue chan udpproto.GamePkg) {
+func (core *Core) Run(queue chan udpproto.NetPacker) {
   for{
     termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
     artifactsMoved := core.MoveArtifacts()
@@ -125,6 +137,58 @@ func (core *Core) UpdateBoard(queue chan udpproto.GamePkg) {
   for {
     netPkg := <-queue
     core.board.MergeArtifacts(netPkg.Artifacts)
+  }
+}
+
+func (core *Core) getEmptySlots() []string {
+    slots := make([]string, 0)
+    for i:=0; i < core.numSlots; i++ {
+      slotUsed := false
+      for _, player := range core.players {
+        if player.Slot() == i {
+          slotUsed = true
+          break
+        }
+       if ! slotUsed {
+         slots = append(slots, strconv.Itoa(i))
+       }
+      }
+    }
+    return slots
+}
+
+func (core *Core) ProccessEvents(queue chan udpproto.EventPkg, out chan udpproto.NetPacker) {
+
+  for {
+    event := <- queue
+    switch event.Etype {
+    case "conn":
+      switch event.Subtype {
+      case "start":
+          logging.Println("Event start ", event.ServerName)
+          slots := core.getEmptySlots()
+          pkg := udpproto.NewEventPkg(core.ServerName, "conn", "replay", slots)
+          out <- pkg
+      case "replay":
+         logging.Println("Event replay ", event.ServerName)
+          slots := event.Data
+          logging.Println("Slots available ", slots)
+          if len(slots) > 0 {
+            slot, _ := strconv.Atoi(slots[0])
+            core.SetSlot(slot)
+            logging.Println("Starting game in slot ", slot)
+            go core.Run(out)
+
+          } else {
+            logging.Println("No Slots available in ", event.ServerName)
+          }
+
+        default:
+          logging.Println("Unknown Event subtype: #", event.Etype, "#-#", event.Subtype)
+        }
+      default:
+        logging.Println("Unknown Event type: #", event.Etype, "#-#", event.Subtype)
+      }
   }
 }
 
