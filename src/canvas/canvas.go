@@ -45,8 +45,8 @@ func (this Canvas) Draw(view *view.View, artifact *artifact.Artifact) {
 
   xFactor := 1.0 / (float64(view.Width()) / float64(this.Width()))
   yFactor := 1.0 / (float64(view.Height()) / float64(this.Height()))
-  relX := pos.X() - float64(view.X0())
-  relY := pos.Y() - float64(view.Y0())
+  relX := pos.X - float64(view.X0())
+  relY := pos.Y - float64(view.Y0())
 
   x := int(relX * xFactor)
   y := int(relY * yFactor)

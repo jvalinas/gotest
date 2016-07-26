@@ -10,13 +10,14 @@ import (
   "canvas"
   "artifact"
   "physics"
-  "netinfo"
+  "udpproto"
 )
 
 func init() {
 }
 
 type Core struct {
+  ServerName string
   board *board.Board
   numSlots int
   slot int
@@ -24,8 +25,9 @@ type Core struct {
   canvas *canvas.Canvas
 }
 
-func NewCore( numSlots int, slot int, board *board.Board ) *Core {
+func NewCore( numSlots int, slot int, board *board.Board, serverName string) *Core {
      core := new(Core)
+     core.ServerName = serverName
      core.board = board
      core.numSlots = numSlots
      core.slot = slot
@@ -46,8 +48,8 @@ func (core *Core) Collitions(current *artifact.Artifact) {
     artifactPos := artifact.Pos()
 
     // Calc distance between centers
-    b := float64(currentPos.X() - artifactPos.X())
-    a := float64(currentPos.Y() - artifactPos.Y())
+    b := float64(currentPos.X - artifactPos.X)
+    a := float64(currentPos.Y - artifactPos.Y)
     distance := math.Sqrt(math.Pow(b, 2) + math.Pow(a, 2))
 
     // Probe of close but not collitioning objects
@@ -70,14 +72,14 @@ func (core *Core) Collitions(current *artifact.Artifact) {
       current.SetCountdown(20)
       artifact.SetCountdown(20)
 
-      if current.Dir().X() * artifact.Dir().X() < 0 {
-        current.SetDir(*physics.NewVector(-current.Dir().X(), current.Dir().Y()))
-        artifact.SetDir(*physics.NewVector(-artifact.Dir().X(), artifact.Dir().Y()))
+      if current.Dir().X * artifact.Dir().X < 0 {
+        current.SetDir(*physics.NewVector(-current.Dir().X, current.Dir().Y))
+        artifact.SetDir(*physics.NewVector(-artifact.Dir().X, artifact.Dir().Y))
       }
 
-      if current.Dir().Y() * artifact.Dir().Y() < 0 {
-        current.SetDir(*physics.NewVector(current.Dir().X(), -current.Dir().Y()))
-        artifact.SetDir(*physics.NewVector(artifact.Dir().X(), -artifact.Dir().Y()))
+      if current.Dir().Y * artifact.Dir().Y < 0 {
+        current.SetDir(*physics.NewVector(current.Dir().X, -current.Dir().Y))
+        artifact.SetDir(*physics.NewVector(artifact.Dir().X, -artifact.Dir().Y))
       }
 
       cmd := exec.Command("/usr/bin/beep")
@@ -109,19 +111,21 @@ func (core *Core) MoveArtifacts() map[int]*artifact.Artifact {
   return artifacts
 }
 
-func (core *Core) Run(queue chan netinfo.NetPackage) {
+func (core *Core) Run(queue chan udpproto.GamePkg) {
   for{
     termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
     artifactsMoved := core.MoveArtifacts()
-    info := netinfo.NewNetPackage(core.slot, artifactsMoved)
-    queue <- info
+    if len(artifactsMoved) != 0 {
+      info := udpproto.NewGamePkg(core.ServerName, artifactsMoved)
+      queue <- info
+    }
 
     termbox.Flush()
-    time.Sleep(50*time.Millisecond)
+    time.Sleep(100*time.Millisecond)
   }
 }
 
-func (core *Core) UpdateBoard(queue chan netinfo.NetPackage) {
+func (core *Core) UpdateBoard(queue chan udpproto.GamePkg) {
   //var netPkg netinfo.NetPackage
   for {
     netPkg := <-queue

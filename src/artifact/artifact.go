@@ -6,6 +6,7 @@ import (
   "encoding/gob"
   "bytes"
   "physics"
+  "logging"
 )
 
 func init() {
@@ -51,13 +52,13 @@ func (object *Artifact) Pulse(width int, height int) {
   newPos := object.artifact.Pos.Sum(incPos)
 
   recalculate := false
-  if newPos.X()  > float64(width-1) || newPos.X() < 0.0 {
-    object.artifact.Dir.SetX(-object.artifact.Dir.X())
+  if newPos.X  > float64(width-1) || newPos.X < 0.0 {
+    object.artifact.Dir.X = -object.artifact.Dir.X
     recalculate = true
   }
 
-  if newPos.Y()  > float64(height-1) || newPos.Y() < 0.0 {
-    object.artifact.Dir.SetY(-object.artifact.Dir.Y())
+  if newPos.Y  > float64(height-1) || newPos.Y < 0.0 {
+    object.artifact.Dir.Y = -object.artifact.Dir.Y
     recalculate = true
   }
 
@@ -134,10 +135,11 @@ func NewActifactFromBytes(data []byte) Artifact {
   var artifact artifact
   err := d.Decode(&artifact)
   if err != nil {
+      logging.Println("Error decoding data: ", err)
       panic(err)
   }
 
-  //fmt.Printf("%#v\n", artifact)
+  //logging.Printf("Artifact decoded %#v\n", artifact)
   return Artifact{artifact: artifact}
 }
 
@@ -149,8 +151,10 @@ func (a Artifact) Bytes() []byte{
   // Encoding
   err := e.Encode(a.artifact)
   if err != nil {
+      logging.Println("Error encoding data: ", err)
       panic(err)
   }
+  //logging.Printf("Artifact encoded %#v\n", a)
   return data.Bytes()
 }
 
