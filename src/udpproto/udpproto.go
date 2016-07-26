@@ -97,14 +97,18 @@ func proccessData(in chan GamePkg, out chan GamePkg, event chan EventPkg,
           logging.Println("Receiving new package from: ",
                           data.name, " with ",
                           len(data.data), " artifacts.")
-          out <- pkgToGameData(data)
+	  t1 := pkgToGameData(data)
+          for _, a := range t1.Artifacts {
+          logging.Println("Received art: ", a.Pos() )
+}
+          out <- t1
         } else {
           logging.Println("Unknown package type: ", data.pkgType)
         }
       case data := <- in:
-        logging.Println("Sending new package from: ",
-                        data.ServerName, " with ",
-                        len(data.Artifacts), " artifacts.")
+        //logging.Println("Sending new package from: ",
+        //                data.ServerName, " with ",
+        //                len(data.Artifacts), " artifacts.")
         sendQueue <- gameDataToPkg(data)
     }
   }
@@ -117,13 +121,13 @@ func gameDataToPkg(gp GamePkg) dataPkg {
     //logging.Println("Appending data? ", artifact.Bytes())
     data = append(data, artifact.Bytes())
   }
-  logging.Println("gameToPkg: Artifacts: ", len(gp.Artifacts)," Data to send:", len(data))
+  //logging.Println("gameToPkg: Artifacts: ", len(gp.Artifacts)," Data to send:", len(data))
   return newDataPkg(gp.ServerName, 0, pkgType, data)
 }
 
 func pkgToGameData(dp dataPkg) GamePkg {
   artifacts := make(map[int]*artifact.Artifact, len(dp.data))
-  logging.Printf("Processing data from %s: %v",dp.name, dp)
+  //logging.Printf("Processing data from %s: %v",dp.name, dp)
   for _, chunk := range dp.data {
     artifact := artifact.NewActifactFromBytes(chunk)
     artifacts[artifact.Id()] = &artifact
@@ -145,7 +149,7 @@ func serverStart(listenIp string, queue chan dataPkg) {
     /* Now listen at selected port */
     ServerConn, err := net.ListenUDP("udp", ServerAddr)
     checkError(err)
-    logging.Println("Server started at: ",  listenIp)
+    logging.Println("Server listening at: ",  listenIp)
     defer ServerConn.Close()
     pkgs := make(map[string]*dataPkg)
     for {
@@ -184,7 +188,7 @@ func clientStart(serverIp string, queue chan dataPkg) {
 
     Conn, err := net.DialUDP("udp", LocalAddr, ServerAddr)
     checkError(err)
-    logging.Println("Client Started at: ",  serverIp)
+    logging.Println("Client connected to: ",  serverIp)
     defer Conn.Close()
     for {
         dataPkg := <- queue

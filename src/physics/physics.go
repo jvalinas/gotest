@@ -8,45 +8,30 @@ func init() {
 }
 
 type Vector struct {
-  x float64
-  y float64
+  X float64
+  Y float64
   Z int
 }
 
 func NewVector(x float64, y float64) *Vector {
   v := new(Vector)
-  v.x = x
-  v.y = y
+  v.X = x
+  v.Y = y
   return v
 }
 
-func (vector Vector) X() float64 {
-  return vector.x
-}
-
-func (vector *Vector) SetX(x float64) {
-  vector.x = x
-}
-
-func (vector Vector) Y() float64 {
-  return vector.y
-}
-
-func (vector *Vector) SetY(y float64) {
-  vector.y = y
-}
 
 func (vector *Vector) Scale(factor float64) Vector {
-  newVector := *NewVector(vector.x * factor, vector.y * factor)
+  newVector := *NewVector(vector.X * factor, vector.Y * factor)
   return newVector
 }
 
 func (vector *Vector) Module() float64 {
-  return (math.Sqrt(vector.x*vector.x+vector.y*vector.y))
+  return (math.Sqrt(vector.X*vector.X+vector.Y*vector.Y))
 }
 
 func (vector *Vector) Sum(v Vector) Vector {
-  return *NewVector(vector.x + v.x, vector.y + v.y)
+  return *NewVector(vector.X + v.X, vector.Y + v.Y)
 }
 
 func (vector *Vector) Normalize() Vector {

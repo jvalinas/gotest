@@ -48,8 +48,8 @@ func (core *Core) Collitions(current *artifact.Artifact) {
     artifactPos := artifact.Pos()
 
     // Calc distance between centers
-    b := float64(currentPos.X() - artifactPos.X())
-    a := float64(currentPos.Y() - artifactPos.Y())
+    b := float64(currentPos.X - artifactPos.X)
+    a := float64(currentPos.Y - artifactPos.Y)
     distance := math.Sqrt(math.Pow(b, 2) + math.Pow(a, 2))
 
     // Probe of close but not collitioning objects
@@ -72,14 +72,14 @@ func (core *Core) Collitions(current *artifact.Artifact) {
       current.SetCountdown(20)
       artifact.SetCountdown(20)
 
-      if current.Dir().X() * artifact.Dir().X() < 0 {
-        current.SetDir(*physics.NewVector(-current.Dir().X(), current.Dir().Y()))
-        artifact.SetDir(*physics.NewVector(-artifact.Dir().X(), artifact.Dir().Y()))
+      if current.Dir().X * artifact.Dir().X < 0 {
+        current.SetDir(*physics.NewVector(-current.Dir().X, current.Dir().Y))
+        artifact.SetDir(*physics.NewVector(-artifact.Dir().X, artifact.Dir().Y))
       }
 
-      if current.Dir().Y() * artifact.Dir().Y() < 0 {
-        current.SetDir(*physics.NewVector(current.Dir().X(), -current.Dir().Y()))
-        artifact.SetDir(*physics.NewVector(artifact.Dir().X(), -artifact.Dir().Y()))
+      if current.Dir().Y * artifact.Dir().Y < 0 {
+        current.SetDir(*physics.NewVector(current.Dir().X, -current.Dir().Y))
+        artifact.SetDir(*physics.NewVector(artifact.Dir().X, -artifact.Dir().Y))
       }
 
       cmd := exec.Command("/usr/bin/beep")

@@ -4,6 +4,7 @@ import (
   "board"
   "artifact"
   "math/rand"
+  "logging"
 )
 
 func init() {
@@ -27,8 +28,8 @@ func (view View) RandomPos() (float64, float64) {
 func (view View) ISeeYou(artifact *artifact.Artifact) bool {
 
   pos := artifact.Pos()
-  return pos.X() >= float64(view.x0) && pos.X() <= float64(view.x1) &&
-     pos.Y() >= float64(view.y0) && pos.Y() <= float64(view.y1)
+  return pos.X >= float64(view.x0) && pos.X <= float64(view.x1) &&
+     pos.Y >= float64(view.y0) && pos.Y <= float64(view.y1)
 
 }
 
@@ -40,6 +41,7 @@ func NewView(numSlots int, slot int, board *board.Board) *View {
      view.y0 = 0
      view.y1 = board.Height()
      view.slot = slot
+     logging.Printf("View created (%s-%s,%s-%s) from %sx%s", view.x0, view.x1, view.y0, view.y1, board.Width(), board.Height())
      return view
 }
 

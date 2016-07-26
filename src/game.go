@@ -1,7 +1,7 @@
 package main
 
 import (
-  _"fmt"
+  "fmt"
   "math/rand"
   "github.com/nsf/termbox-go"
   "artifact"
@@ -11,7 +11,6 @@ import (
   "udpproto"
   "os"
   "logging"
-  "strconv"
 )
 
 const (
@@ -23,12 +22,16 @@ func init() {
 
 func main(){
 
+  if len(os.Args) < 2 {
+      fmt.Println("Error: Insufficient arguments (ServerName needed)")
+      return
+  }
   numSlots := 2
   slot := 1
   serverName := os.Args[1]
   artifacts := 1
-  width := 10000
-  height := 1000
+  width := 500
+  height := 400
   var serverIp string
   switch serverName {
     case "Server1":
@@ -42,7 +45,7 @@ func main(){
   logging.Init(loggingFile, prefix)
 
   //localAddr := ":10001"
-  logging.Println("Server" + serverName + "started. Connecting to: ", serverIp)
+  logging.Println("Server " + serverName + " started. Connecting to: ", serverIp)
   //fmt.Println("ServerIP: ", serverIp)
 
   err := termbox.Init()
